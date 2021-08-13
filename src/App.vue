@@ -55,9 +55,9 @@ export default {
   methods: {
      remove(id){
       axios.delete(`http://localhost:3000/tasks/deleteTask/${id}`)
-      .then(()=> {
-        this.getTasks()
-        this.tasks = this.tasks.filter( t => t.id !==id );
+          .then(()=> {
+            this.getTasks()
+        // this.tasks = this.tasks.filter( t => t.id !==id );
       })
     },
     rename(description, id){

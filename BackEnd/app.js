@@ -66,6 +66,7 @@ router.get('/tasks', async (ctx)=>{
 
 router.delete('/tasks/deleteTask/:id', async (ctx)=>{
     await taskDestroy(ctx.params.id)
+    ctx.body = {id:ctx.params.id};
 })
 
 app.listen(3000, function(){
