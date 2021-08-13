@@ -2,15 +2,15 @@
   <div :class="{viewed: task.checked}">
     <li :class="{completed: task.completed}">
       <span :class="{checked: task.completed}">
-        <input type="checkbox" v-bind:checked="task.checkbox_clicked" v-on:change ="completer(), $emit('chbxchange', index)">
-        <strong>{{index+1}}</strong>
+        <input type="checkbox" v-bind:checked="task.checkbox_clicked" v-on:change ="completer(), $emit('chbxchange', task.id)">
+        <strong>{{task.id}}</strong>
         {{task.title}}
       </span>
       <div class="buttons">
         <input type="text" v-model="renameDescription"
           :class="{usable: !task.rename}">
         <button class="rename-but"
-          v-on:click =" hider(index), $emit('rename-task', renameDescription, index)"
+          v-on:click =" hider(index), $emit('rename-task', renameDescription, task.id)"
           :class="{usable: !task.rename}"><img src="~@/assets/accepted.png" class="img" alt="">
         </button>
 

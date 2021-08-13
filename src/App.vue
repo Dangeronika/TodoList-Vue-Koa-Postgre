@@ -61,8 +61,12 @@ export default {
       })
     },
     rename(description, id){
-      this.tasks[id].rename = false;
-      this.tasks[id].title = description;
+       axios.put(`http://localhost:3000/tasks/renameTask/${id}`, {description})
+           .then(()=>{
+             this.getTasks()
+           })
+      // this.tasks[id].rename = false;
+      // this.tasks[id].title = description;
     },
     addTodo(newTodo){
       axios.post('http://localhost:3000/tasks/addTask', {newTodo})
@@ -77,7 +81,10 @@ export default {
       })
     },
     saveCondition(id) {
-      this.tasks[id].checkbox_clicked = !this.tasks[id].checkbox_clicked;
+       axios.put(`http://localhost:3000/tasks/saveCondition/${id}`, this.tasks.find((t)=> t.id == id).checkbox_clicked)
+           .then(()=>{
+             this.getTasks()
+           })
     },
     changeRenameCondition(id) {
       this.tasks[id].rename = true;

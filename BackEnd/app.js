@@ -44,7 +44,9 @@ try {
 }
     // eslint-disable-next-line no-unexpected-multiline
 (async ()=>{
-    await todoModel.sync({ force: true });//{ force: true }
+    await todoModel.sync({
+        force: true
+    });//{ force: true }
 })();
 
 
@@ -67,6 +69,15 @@ router.get('/tasks', async (ctx)=>{
 router.delete('/tasks/deleteTask/:id', async (ctx)=>{
     await taskDestroy(ctx.params.id)
     ctx.body = {id:ctx.params.id};
+})
+
+router.put('/tasks/renameTask/:id', async (ctx)=>{
+    let newTitle = ctx.request.body.description
+    ctx.body = await renameTask(ctx.params.id, newTitle)
+})
+
+router.put('/tasks/saveCondition/:id', async (ctx)=>{
+    await changeConditions(ctx.params.id,ctx.request.body)
 })
 
 app.listen(3000, function(){
@@ -94,6 +105,22 @@ async function addTask(newTask) {
 
 async function taskDestroy(id) {
     await todoModel.destroy({
+        where: {
+            id: id
+        }
+    })
+}
+
+async function renameTask(id, text) {
+    await todoModel.update({title: text}, {
+        where: {
+            id: id
+        }
+    })
+}
+
+async function changeConditions(id, checkboxState){
+    await todoModel.update({checkbox_clicked: !checkboxState}, {
         where: {
             id: id
         }
