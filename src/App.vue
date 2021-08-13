@@ -13,7 +13,8 @@
         v-if="filterTasks.length"
         @remove-todo='remove'
         v-on:rename="rename"
-        @savecondition="savecondition"
+        @savecondition="saveCondition"
+        @changeRenameCondition="changeRenameCondition"
     />
     <p v-else>No tasks!</p>
   </div>
@@ -29,11 +30,7 @@ export default {
   name: "App",
   data() {
     return {
-      tasks: [
-        {id: 0, title: 'Make a todo list', completed:false, rename: false, checkbox_clicked: false},
-        {id: 1, title: 'Refactor the code', completed:false, rename: false, checkbox_clicked: false},
-        {id: 2, title: 'Done the work', completed:false, rename: false, checkbox_clicked: false}
-      ],
+      tasks: Array,
       searchStroke: '',
     }
   },
@@ -56,30 +53,34 @@ export default {
     }
   },
   methods: {
-    remove(id){
-      this.tasks = this.tasks.filter( t => t.id !==id );
-      this.setTasks();
-    },
-    rename(description, id){
-      this.tasks[id].title = description;
-      this.setTasks();
-    },
-    addTodo(newTodo){
-      axios.post('http://localhost:3000/tasks/addTask',{
-        newTodo
+     remove(id){
+      axios.delete(`http://localhost:3000/tasks/deleteTask/${id}`)
+      .then(()=> {
+        this.getTasks()
+        this.tasks = this.tasks.filter( t => t.id !==id );
       })
     },
-    setTasks(){
-      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    rename(description, id){
+      this.tasks[id].rename = false;
+      this.tasks[id].title = description;
     },
-    getTasks(){
-      if (localStorage.getItem('tasks')){
-        this.tasks = JSON.parse(localStorage.getItem('tasks'));
-      }
+    addTodo(newTodo){
+      axios.post('http://localhost:3000/tasks/addTask', {newTodo})
+          .then(()=>{
+            this.getTasks()
+      })
     },
-    savecondition(id) {
+    async getTasks(){
+      axios.get('http://localhost:3000/tasks')
+          .then((response)=>{
+            this.tasks = response.data;
+      })
+    },
+    saveCondition(id) {
       this.tasks[id].checkbox_clicked = !this.tasks[id].checkbox_clicked;
-      this.setTasks();
+    },
+    changeRenameCondition(id) {
+      this.tasks[id].rename = true;
     }
   },
 };

@@ -9,17 +9,17 @@
       <div class="buttons">
         <input type="text" v-model="renameDescription"
           :class="{usable: !task.rename}">
-        <button class="rename-but" 
-          v-on:click =" hider(), $emit('rename-task', renameDescription, index)"
+        <button class="rename-but"
+          v-on:click =" hider(index), $emit('rename-task', renameDescription, index)"
           :class="{usable: !task.rename}"><img src="~@/assets/accepted.png" class="img" alt="">
         </button>
 
-        <button class="rename-but" 
-          v-on:click ="hider()"
+        <button class="rename-but"
+          v-on:click ="hider(index)"
           :class="{usable: task.rename}" ><img src="~@/assets/pencil-pen.png" class="img" alt="">
         </button>
 
-        <button class="rename-but" 
+        <button class="rename-but"
           v-on:click ="$emit('remove-todo', task.id)">&times;
         </button>
       </div>
@@ -40,8 +40,8 @@ export default {
   },
   methods: {
 
-    hider: function() {
-      this.task.rename = !this.task.rename;
+    hider: function(index) {
+      this.$emit('changeRename', index)
     },
     completer: function() {
       this.task.completed = !this.task.completed;

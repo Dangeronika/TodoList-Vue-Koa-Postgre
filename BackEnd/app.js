@@ -23,15 +23,15 @@ const todoModel = sequelize.define('todoListBase', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    renameState: {
+    checkbox_clicked: {
         type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    checkboxState: {
+    completed: {
         type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    completedState: {
+    rename: {
         type: Sequelize.BOOLEAN,
         allowNull: false
     }
@@ -48,15 +48,53 @@ try {
 })();
 
 
-router.post('/tasks/addTask', (ctx)=>{
-    let todo = todoModel.create({
-        title: ctx.request.body.newTodo.title,
-        renameState: ctx.request.body.newTodo.rename,
-        checkboxState: ctx.request.body.newTodo.checkbox_clicked,
-        completedState: ctx.request.body.newTodo.completed
-    })
+router.post('/tasks/addTask', async (ctx)=>{
+    let newTask = ctx.request.body.newTodo
+    newTask.id = await addTask(newTask)
+    ctx.response.body = newTask
+})
+
+router.get('/tasks', async (ctx)=>{
+    let tasks = await getTasks()
+    if (tasks.length) {
+        ctx.body = tasks
+    } else {
+        ctx.status = 204
+        ctx.body = 'No content'
+    }
+})
+
+router.delete('/tasks/deleteTask/:id', async (ctx)=>{
+    await taskDestroy(ctx.params.id)
 })
 
 app.listen(3000, function(){
     console.log('Server running on https://localhost:3000')
 });
+
+async function getTasks() {
+    let dataBD = await todoModel.findAll()
+    let tasks = []
+    dataBD.forEach((task)=>{
+        tasks.push(task.dataValues)
+    })
+    return tasks
+}
+
+async function addTask(newTask) {
+    let createdTask = await todoModel.create({
+        title: newTask.title,
+        checkbox_clicked: newTask.checkbox_clicked,
+        completed: newTask.completed,
+        rename: newTask.rename
+    })
+    return createdTask.id
+}
+
+async function taskDestroy(id) {
+    await todoModel.destroy({
+        where: {
+            id: id
+        }
+    })
+}

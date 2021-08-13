@@ -21,7 +21,6 @@ export default {
   methods: {
       onSubmit() {
         let newTodo = {
-          id: Date.now(),
           title: this.taskName,
           completed: false,
           rename: false,
