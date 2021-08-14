@@ -28,8 +28,8 @@ export default {
     rename(description, id){
       this.$emit('rename', description, id)
     },
-    saveCondition(id) {
-      this.$emit('savecondition', id)
+    saveCondition(id, taskState) {
+      this.$emit('saveCondition', id, taskState)
     },
     changeRename(id) {
       this.$emit('changeRenameCondition', id)

@@ -3,17 +3,17 @@
     <Todohead/>
     <AddTodotask
         v-on:add-todo='addTodo'
-        v-on:set-local="setTasks"
         :search="searchStroke"
         @inputChange="searchStroke = $event"
     />
     <Todolist
         :tasks = 'filterTasks'
+        :sortTasks = 'sortTasks'
         class="list"
         v-if="filterTasks.length"
         @remove-todo='remove'
         v-on:rename="rename"
-        @savecondition="saveCondition"
+        @saveCondition="saveCondition"
         @changeRenameCondition="changeRenameCondition"
     />
     <p v-else>No tasks!</p>
@@ -50,6 +50,9 @@ export default {
       else{
         return this.tasks
       }
+    },
+    sortTasks() {
+      return this.sortTasksById(this.tasks, 'id')
     }
   },
   methods: {
@@ -80,14 +83,21 @@ export default {
             this.tasks = response.data;
       })
     },
-    saveCondition(id) {
-       axios.put(`http://localhost:3000/tasks/saveCondition/${id}`, this.tasks.find((t)=> t.id == id).checkbox_clicked)
+    saveCondition(id, taskState) {
+       axios.put(`http://localhost:3000/tasks/saveCondition/${id}`, {id, taskState})
            .then(()=>{
              this.getTasks()
            })
     },
     changeRenameCondition(id) {
       this.tasks[id].rename = true;
+    },
+    sortTasksById(array, key) {
+       return array.sort(function(a,b) {
+         let x = a[key];
+         let y = b[key];
+         return((x<y)?-1:((x>y)?1:0));
+       })
     }
   },
 };

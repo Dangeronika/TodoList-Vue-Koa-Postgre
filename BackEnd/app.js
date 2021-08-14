@@ -77,7 +77,7 @@ router.put('/tasks/renameTask/:id', async (ctx)=>{
 })
 
 router.put('/tasks/saveCondition/:id', async (ctx)=>{
-    await changeConditions(ctx.params.id,ctx.request.body)
+    await changeConditions(ctx.params.id,ctx.request.body.taskState)
 })
 
 app.listen(3000, function(){
@@ -119,8 +119,11 @@ async function renameTask(id, text) {
     })
 }
 
-async function changeConditions(id, checkboxState){
-    await todoModel.update({checkbox_clicked: !checkboxState}, {
+async function changeConditions(id, taskState){
+    await todoModel.update({
+        checkbox_clicked: taskState,
+        completed: taskState
+    }, {
         where: {
             id: id
         }

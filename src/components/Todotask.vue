@@ -2,7 +2,10 @@
   <div :class="{viewed: task.checked}">
     <li :class="{completed: task.completed}">
       <span :class="{checked: task.completed}">
-        <input type="checkbox" v-bind:checked="task.checkbox_clicked" v-on:change ="completer(), $emit('chbxchange', task.id)">
+        <input type="checkbox"
+               v-bind:checked="task.checkbox_clicked"
+               v-on:change ="completer(), $emit('chbxchange', task.id, !task.checkbox_clicked)"
+        >
         <strong>{{task.id}}</strong>
         {{task.title}}
       </span>
@@ -35,7 +38,7 @@ export default {
   },
   data() {
     return {
-      renameDescription: ''
+      renameDescription: '',
     }
   },
   methods: {
