@@ -6,10 +6,13 @@ const Router = require('@koa/router')
 const app = new koa();
 const router = new Router();
 const Sequelize = require("sequelize");
+let modelDB = require('./models/tododb')
+const {DataTypes} = require("sequelize");
 const sequelize = new Sequelize("todoListBase", "postgres", "5525", {
     dialect: "postgres",
     host: "localhost"
 });
+
 
 
 app.use(cors());
@@ -18,24 +21,7 @@ app.use(KoaBody());
 app.use(router.routes());
 app.use(router.allowedMethods())
 
-const todoModel = sequelize.define('todoListBase', {
-    title: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    checkbox_clicked: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    },
-    completed: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    },
-    rename: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    }
-})
+const todoModel = modelDB(sequelize, DataTypes)
 try {
     sequelize.authenticate();
     console.log('Connection has been established successfully.');
@@ -44,9 +30,7 @@ try {
 }
     // eslint-disable-next-line no-unexpected-multiline
 (async ()=>{
-    await todoModel.sync({
-        force: true
-    });//{ force: true }
+    await todoModel.sync({});//{ force: true }
 })();
 
 
